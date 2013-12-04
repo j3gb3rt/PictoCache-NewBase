@@ -76,13 +76,13 @@ public class RestApiV3 extends AsyncTask<RestData, Void, Boolean> {
                         minLat = Double.valueOf(paramsMap.get("minLat"));
                     }
                     if (paramsMap.containsKey("maxLat")) {
-                        minLat = Double.valueOf(paramsMap.get("maxLat"));
+                        maxLat = Double.valueOf(paramsMap.get("maxLat"));
                     }
                     if (paramsMap.containsKey("minLon")) {
-                        minLat = Double.valueOf(paramsMap.get("minLon"));
+                        minLon = Double.valueOf(paramsMap.get("minLon"));
                     }
                     if (paramsMap.containsKey("maxLon")) {
-                        minLat = Double.valueOf(paramsMap.get("maxLon"));
+                        maxLon = Double.valueOf(paramsMap.get("maxLon"));
                     }
 
                     this.images = RestApiInterface.getImages(sd, sc, l, k, minLat, maxLat, minLon, maxLon);
@@ -95,6 +95,15 @@ public class RestApiV3 extends AsyncTask<RestData, Void, Boolean> {
                     }
 
                     this.popularKeywords = RestApiInterface.getPopularKeywords(limit);
+                    break;
+                case GET_KEYWORDS_FOR_IMAGE:
+                    Integer imgID = null;
+
+                    if (paramsMap.containsKey("imgID")) {
+                        imgID = Integer.valueOf(paramsMap.get("imgID"));
+                    }
+
+
                     break;
                 case POST_IMAGE:
                     Image i = new Image(-1);
@@ -131,6 +140,7 @@ public class RestApiV3 extends AsyncTask<RestData, Void, Boolean> {
             case GET_IMAGES:
                 if (aBool) {
                     AdapterHolder.getAdapter(adapterPosition).setImages(images);
+                    AdapterHolder.getAdapter(adapterPosition).notifyDataSetChanged();
                 }
                 else {
                     Toast.makeText(context, "Failed to get list of images", Toast.LENGTH_SHORT).show();

@@ -39,6 +39,20 @@ public class RestApiInterface {
     public static final String BASE_KW_URL =
             "http://dev.m.gatech.edu/d/gtg310x/api/imagepail/keyword";
 
+    public static Uri getThumbnailData(final int id) throws IOException {
+        String url = BASE_IMG_URL + "/" + id;
+
+        byte[] image = RestApi.getImage(url, "thumbnail");
+        Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
+        File f = new File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath()
+                        + File.separator + "img_" + ((new Date()).getTime() + ".png"));
+        bmp.compress(Bitmap.CompressFormat.PNG, 50, new FileOutputStream(f));
+        return Uri.fromFile(f);
+    }
+
+
+
     public static Uri getImageData(final int id) throws IOException {
         String url = BASE_IMG_URL + "/" + id;
 

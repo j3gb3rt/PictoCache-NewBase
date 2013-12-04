@@ -1,6 +1,9 @@
 package edu.gatech.cs4261.wheresdabeef;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.app.SearchableInfo;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
@@ -62,6 +65,17 @@ public class HomeFeed extends ActionBarActivity
         numberOfSections = mNavigationDrawerFragment.getNumberOfSections();
     }
 
+    public void onNewIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            //use the query to search your data somehow
+
+            onNavigationDrawerItemSelected(-1, query);
+        }
+
+    }
+
+
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -114,11 +128,12 @@ public class HomeFeed extends ActionBarActivity
             getMenuInflater().inflate(R.menu.home_feed, menu);
             MenuItem searchItem = menu.findItem(R.id.action_search);
             SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-            //SearchManager searchManager =
-            //        	         (SearchManager)getSystemService(Context.SEARCH_SERVICE);
-            //SearchableInfo info =
-            //        	         searchManager.getSearchableInfo(getComponentName());
-            //searchView.setSearchableInfo(info);
+            SearchManager searchManager =
+                    	         (SearchManager)getSystemService(Context.SEARCH_SERVICE);
+            SearchableInfo info =
+                    	         searchManager.getSearchableInfo(getComponentName());
+            searchView.setSearchableInfo(info);
+            searchView.setQueryHint("#SearchForATag");
             restoreActionBar();
             return true;
         }

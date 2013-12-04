@@ -2,9 +2,7 @@ package edu.gatech.cs4261.wheresdabeef;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.widget.GridView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import edu.gatech.cs4261.wheresdabeef.domain.Image;
@@ -23,10 +21,10 @@ public class DownloadImageTask extends AsyncTask<ArrayList<Image>,Integer,Boolea
         RestApiInterface rai = new RestApiInterface();
         for (int i = 0; i < images.size(); i++) {
             try {
-                imageLocation = rai.getImageData(images.get(i).getId());
+                imageLocation = rai.getThumbnailData(images.get(i).getId());
                 publishProgress(i);
             }
-            catch (IOException e) {
+            catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -40,7 +38,6 @@ public class DownloadImageTask extends AsyncTask<ArrayList<Image>,Integer,Boolea
         super.onProgressUpdate(values);
         Uri imageLoc = imageLocation;
         int position = values[0];
-        GridView view = HomeFeed.getGridView();
         ImageAdapter adapter = AdapterHolder.getAdapter(mAdapterPosition);
         adapter.setImageUri(position, imageLoc);
         adapter.notifyDataSetChanged();

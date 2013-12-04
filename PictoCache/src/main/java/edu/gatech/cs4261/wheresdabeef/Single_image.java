@@ -153,7 +153,9 @@ public class Single_image extends ActionBarActivity {
             int width = (int) getResources().getDimension(R.dimen.single_image_width);
             imageView.setImageBitmap(ImageAdapter.decodeSampledBitmap(imageLocation, 100, 100));
             TextView textView = (TextView) rootView.findViewById(R.id.textView);
-            textView.setText("Keywords:");
+            String keywordText = "Keywords:";
+            //for()
+            textView.setText(keywordText);
             return rootView;
         }
     }

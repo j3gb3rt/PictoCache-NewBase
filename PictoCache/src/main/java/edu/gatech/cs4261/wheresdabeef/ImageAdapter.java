@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import org.apache.http.message.BasicNameValuePair;
 
@@ -35,7 +36,7 @@ public class ImageAdapter extends BaseAdapter {
         mContext = c;
         mImages = new ArrayList<Image>();
         mPosition = position;
-        if (position < 3) {
+        if ((position > 0) && (position < 4)) {
             if (keyword.equals(NavigationDrawerFragment.PREDEFINED_SECTION_NEARBY)) {
                 LocationApi.startPollingLocation(mContext);
                 RestApiV3 task = new RestApiV3(mContext);
@@ -47,13 +48,13 @@ public class ImageAdapter extends BaseAdapter {
                 data.addParam(new BasicNameValuePair("l", String.valueOf(4)));
                 Location location = LocationApi.stopPollingLocation();
                 data.addParam(new BasicNameValuePair("minLat",
-                              String.valueOf(location.getLatitude() - 0.0001)));
+                              String.valueOf(location.getLatitude() - 0.0005)));
                 data.addParam(new BasicNameValuePair("maxLat",
-                              String.valueOf(location.getLatitude() + 0.0001)));
+                              String.valueOf(location.getLatitude() + 0.0005)));
                 data.addParam(new BasicNameValuePair("minLon",
-                              String.valueOf(location.getLongitude() - 0.0001)));
+                              String.valueOf(location.getLongitude() - 0.0005)));
                 data.addParam(new BasicNameValuePair("maxLon",
-                              String.valueOf(location.getLongitude() + 0.0001)));
+                              String.valueOf(location.getLongitude() + 0.0005)));
                 task.execute(data);
             }
             if (keyword.equals(NavigationDrawerFragment.PREDEFINED_SECTION_POPULAR)) {
@@ -85,74 +86,6 @@ public class ImageAdapter extends BaseAdapter {
             data.addParam(new BasicNameValuePair("k", keyword));
             task.execute(data);
         }
-//        images = new ArrayList<Integer>();
-//        if (grid) {
-//            switch (i)
-//            {
-//                case 1:
-//                    images.add(0);
-//                    images.add(1);
-//                    images.add(2);
-//                    images.add(3);
-//                    images.add(4);
-//                    images.add(5);
-//                    images.add(7);
-//                    images.add(8);
-//                    images.add(9);
-//                    images.add(10);
-//                    break;
-//                case 2:
-//                    images.add(6);
-//                    images.add(7);
-//                    images.add(8);
-//                    images.add(9);
-//                    images.add(10);
-//                    images.add(11);
-//                    break;
-//                case 3:
-//                    images.add(1);
-//                    images.add(3);
-//                    images.add(5);
-//                    images.add(7);
-//                    images.add(9);
-//                    images.add(11);
-//                    break;
-//                case 4:
-//                    images.add(0);
-//                    images.add(2);
-//                    images.add(4);
-//                    images.add(6);
-//                    images.add(8);
-//                    images.add(10);
-//                    break;
-//                case 5:
-//                    images.add(6);
-//                    images.add(0);
-//                    images.add(7);
-//                    images.add(1);
-//                    images.add(8);
-//                    images.add(2);
-//                    break;
-//                case 6:
-//                    images.add(3);
-//                    images.add(9);
-//                    images.add(4);
-//                    images.add(10);
-//                    images.add(5);
-//                    images.add(11);
-//                    break;
-//                default:
-//                    images.add(1);
-//            }
-//        }
-//        else{
-//            if (i < 12)
-//                images.add(i);
-//        }
-        //for(int i = 0; i < rand; i++)
-        //{
-        // dog[i] = mThumbIds[(int) (8 * Math.random())];
-        //}
     }
 
     public ImageAdapter(Context c) {
@@ -275,21 +208,29 @@ public class ImageAdapter extends BaseAdapter {
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View rootView = inflater.inflate(R.layout.picture_loading, parent, false);
 
-        SquareImageView imageView;
-        if (convertView == null) { // if it's not recycled, initialize some attributes
-                imageView = new SquareImageView(mContext);
+        ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
+        //if (convertView == null) { // if it's not recycled, initialize some attributes
+                //imageView = new SquareImageView(mContext);
                 //imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setPadding(4, 4, 4, 4);
-        }
-        else {
-                imageView = (SquareImageView) convertView;
-        }
-        if(mImages.get(position).getImage() != null)
+                //imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                //imageView.setPadding(4, 4, 4, 4);
+        //}
+        //else {
+                //imageView = (SquareImageView) convertView;
+        //}
+        if(mImages.get(position).getImage() != null) {
+            progressBar.setVisibility(View.GONE);
+            //imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setPadding(4, 4, 4, 4);
+            imageView.setVisibility(View.VISIBLE);
             imageView.setImageBitmap(decodeSampledBitmap(mImages.get(position).getImage(), 100, 100));
             //imageView.setImageBitmap(decodeSampledBitmapFromResource(mContext.getResources(),mThumbIds[images.get(position)], 100, 100));
-        return imageView;
+        }
+        return rootView;
     }
 
     // references to our images
@@ -302,7 +243,7 @@ public class ImageAdapter extends BaseAdapter {
 //            R.drawable.i11, R.drawable.i12
 //    };
 
-    private class SquareImageView extends ImageView {
+    public class SquareImageView extends ImageView{
         public SquareImageView(Context context) {
             super(context);
         }

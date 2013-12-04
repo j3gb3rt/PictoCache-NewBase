@@ -57,6 +57,13 @@ public class RestData {
         GET_POPULAR_KEYWORDS(HttpAction.GET),
         /**
          * Expected Parameters:
+         *      imgID (image ID)
+         *      l (length)
+         *
+         */
+        GET_KEYWORDS_FOR_IMAGE(HttpAction.GET),
+        /**
+         * Expected Parameters:
          *      lat (latitude)
          *      lon (longitude)
          *
