@@ -12,19 +12,21 @@ import edu.gatech.cs4261.wheresdabeef.rest.RestApiInterface;
  * Created by jonathan on 11/4/13.
  */
 public class DownloadImageTask extends AsyncTask<ArrayList<Image>,Integer,Boolean>{
-    private Uri imageLocation;
+    private ArrayList<Uri> imageLocations;
     private int mAdapterPosition;
 
     @Override
     protected Boolean doInBackground(ArrayList<Image>... params) {
         ArrayList<Image> images = params[0];
         RestApiInterface rai = new RestApiInterface();
+        imageLocations = new ArrayList<Uri>();
         for (int i = 0; i < images.size(); i++) {
             try {
-                imageLocation = rai.getThumbnailData(images.get(i).getId());
+                imageLocations.add(rai.getThumbnailData(images.get(i).getId()));
                 publishProgress(i);
             }
             catch (Exception e) {
+                imageLocations.add(null);
                 e.printStackTrace();
             }
 
@@ -36,10 +38,9 @@ public class DownloadImageTask extends AsyncTask<ArrayList<Image>,Integer,Boolea
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
-        Uri imageLoc = imageLocation;
         int position = values[0];
         ImageAdapter adapter = AdapterHolder.getAdapter(mAdapterPosition);
-        adapter.setImageUri(position, imageLoc);
+        adapter.setImageUri(position, imageLocations.get(position));
         adapter.notifyDataSetChanged();
         AdapterHolder.setAdapter(mAdapterPosition, adapter);
 

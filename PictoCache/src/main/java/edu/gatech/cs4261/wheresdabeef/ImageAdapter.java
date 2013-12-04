@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +44,7 @@ public class ImageAdapter extends BaseAdapter {
                 data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
                 data.addParam(new BasicNameValuePair("sd", RestApiInterface.SORT_DESC));
                 data.addParam(new BasicNameValuePair("sc", RestApiInterface.SORT_IMG_ID));
-                data.addParam(new BasicNameValuePair("l", String.valueOf(4)));
+                data.addParam(new BasicNameValuePair("l", String.valueOf(8)));
                 Location location = LocationApi.stopPollingLocation();
                 data.addParam(new BasicNameValuePair("minLat",
                               String.valueOf(location.getLatitude() - 0.0005)));
@@ -64,7 +63,7 @@ public class ImageAdapter extends BaseAdapter {
                 data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
                 data.addParam(new BasicNameValuePair("sd", RestApiInterface.SORT_DESC));
                 data.addParam(new BasicNameValuePair("sc", RestApiInterface.SORT_IMG_ID));
-                data.addParam(new BasicNameValuePair("l", String.valueOf(4)));
+                data.addParam(new BasicNameValuePair("l", String.valueOf(8)));
                 task.execute(data);
             }
             if (keyword.equals(NavigationDrawerFragment.PREDEFINED_SECTION_NEW)) {
@@ -74,7 +73,7 @@ public class ImageAdapter extends BaseAdapter {
                 data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
                 data.addParam(new BasicNameValuePair("sd", RestApiInterface.SORT_DESC));
                 data.addParam(new BasicNameValuePair("sc", RestApiInterface.SORT_IMG_ID));
-                data.addParam(new BasicNameValuePair("l", String.valueOf(4)));
+                data.addParam(new BasicNameValuePair("l", String.valueOf(8)));
                 task.execute(data);
             }
         }
@@ -208,10 +207,11 @@ public class ImageAdapter extends BaseAdapter {
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rootView = inflater.inflate(R.layout.picture_loading, parent, false);
+        CustomRelativeLayout rootView = (CustomRelativeLayout) inflater.inflate(R.layout.picture_loading, parent, false);
 
         ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
+        SquareImageView imageView = (SquareImageView) rootView.findViewById(R.id.imageView);
+
         //if (convertView == null) { // if it's not recycled, initialize some attributes
                 //imageView = new SquareImageView(mContext);
                 //imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
@@ -243,23 +243,4 @@ public class ImageAdapter extends BaseAdapter {
 //            R.drawable.i11, R.drawable.i12
 //    };
 
-    public class SquareImageView extends ImageView{
-        public SquareImageView(Context context) {
-            super(context);
-        }
-
-        public SquareImageView(Context context, AttributeSet attrs) {
-            super(context, attrs);
-        }
-
-        public SquareImageView(Context context, AttributeSet attrs, int defStyle) {
-            super(context, attrs, defStyle);
-        }
-
-        @Override
-        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth()); //Snap to width
-        }
-    }
 }
