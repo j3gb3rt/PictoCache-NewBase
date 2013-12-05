@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,6 +46,7 @@ public class Captured_image extends ActionBarActivity {
      */
     ViewPager mViewPager;
     static Image mImage;
+    static EditText userInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,12 +84,14 @@ public class Captured_image extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_upload:
+
                 RestApiV3 task = new RestApiV3(getApplication());
                 RestData data = new RestData();
                 data.setAction(RestData.RestAction.POST_IMAGE);
                 data.addParam(new BasicNameValuePair("lat", String.valueOf(mImage.getLatitude())));
                 data.addParam(new BasicNameValuePair("lon", String.valueOf(mImage.getLongitude())));
-                data.setImage(mImage.getImage());
+                data.addParam(new BasicNameValuePair("keywords", userInput.getText().toString()));
+                        data.setImage(mImage.getImage());
                 data.setThumb(mImage.getThumbnail());
 
                 task.execute(data);
@@ -186,11 +190,14 @@ public class Captured_image extends ActionBarActivity {
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_taken_picture, container, false);
             ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
+            TextView textView = (TextView) rootView.findViewById(R.id.textView);
+            Captured_image.userInput = (EditText) rootView.findViewById(R.id.tags);
+
             Uri imageLocation = (Uri) getArguments().getParcelable("imageLocation");
             Bitmap image = ImageAdapter.decodeSampledBitmap(imageLocation, 100, 100);
             imageView.setMaxWidth((int) getResources().getDimension(R.dimen.single_image_width));
             imageView.setImageBitmap(image);
-            TextView textView = (TextView) rootView.findViewById(R.id.textView);
+
             Location coordinates = (Location) getArguments().getParcelable("coordinates");
             double latitude = coordinates.getLatitude();
             double longitude = coordinates.getLongitude();

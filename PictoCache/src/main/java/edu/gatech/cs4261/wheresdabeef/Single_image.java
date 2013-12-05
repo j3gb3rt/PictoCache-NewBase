@@ -1,6 +1,5 @@
 package edu.gatech.cs4261.wheresdabeef;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -101,7 +100,7 @@ public class Single_image extends ActionBarActivity {
         @Override
         public int getCount() {
             // Show 3 total pages.image"
-            return 3;
+            return 1;
         }
 
         @Override
@@ -150,15 +149,17 @@ public class Single_image extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_single_picture, container, false);
             ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
-            Uri imageLocation = getArguments().getParcelable("imageLocation");
-            int width = (int) getResources().getDimension(R.dimen.single_image_width);
-            Bitmap image = ImageAdapter.decodeSampledBitmap(imageLocation, 100, 100);
-            if (image != null)
-                imageView.setImageBitmap(image);
             TextView textView = (TextView) rootView.findViewById(R.id.textView);
-            String keywordText = "Keywords:";
-            //for()
-            textView.setText(keywordText);
+//            Uri imageLocation = getArguments().getParcelable("imageLocation");
+//            int width = (int) getResources().getDimension(R.dimen.single_image_width);
+//            imageView.setImageBitmap(ImageAdapter.decodeSampledBitmap(imageLocation, 100, 100));
+//            Bitmap image = ImageAdapter.decodeSampledBitmap(imageLocation, 100, 100);
+//            if (image != null)
+//                imageView.setImageBitmap(image);
+//            TextView textView = (TextView) rootView.findViewById(R.id.textView);
+//            String keywordText = "Keywords:";
+//            //for()
+//            textView.setText(keywordText);
             return rootView;
         }
     }

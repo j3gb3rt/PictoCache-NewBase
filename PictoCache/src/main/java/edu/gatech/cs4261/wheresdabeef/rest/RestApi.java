@@ -117,7 +117,7 @@ public class RestApi {
     // http://stackoverflow.com/questions/2793150/how-to-use-java-net-urlconnection-to-fire-and-handle-http-requests
     public static JSONObject postImage(String url, Image image) throws IOException {
         File f = new File(image.getImage().getPath());
-
+        File g = new File(image.getImage().getPath());
         int maxSize = 1000000;
         if (f.length() > maxSize) {
             double scale = Math.ceil(f.length() / maxSize);
@@ -130,6 +130,11 @@ public class RestApi {
                     Bitmap.createScaledBitmap(bmp, newWidth, newHeight, false);
             scaledBmp.compress(Bitmap.CompressFormat.PNG, 50, new FileOutputStream(f));
         }
+
+        Bitmap thmb = BitmapFactory.decodeFile(image.getImage().getPath());
+        Bitmap scaledBmp =
+                Bitmap.createScaledBitmap(thmb, 200, 200, false);
+        scaledBmp.compress(Bitmap.CompressFormat.PNG, 50, new FileOutputStream(g));
 
         String boundary = Long.toHexString(System.currentTimeMillis());
         String CRLF = "\r\n"; // Line separator required by multipart/form-data.

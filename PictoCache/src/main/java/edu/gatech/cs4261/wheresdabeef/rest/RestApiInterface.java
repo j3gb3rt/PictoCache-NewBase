@@ -136,6 +136,29 @@ public class RestApiInterface {
         return images;
     }
 
+    public static List<String> getKeywordsForImage(final int imgId)
+                                 throws IOException{
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("imgId", String.valueOf(imgId));
+
+        JSONArray jsonArr = RestApi.get(BASE_KW_URL, params);
+
+        List<String> keywords = new ArrayList<String>();
+
+        try {
+            for (int i = 0; i < jsonArr.length(); i++) {
+                JSONObject json = jsonArr.getJSONObject(i);
+
+                String keyword = new String(json.getString("keyword"));
+                keywords.add(keyword);
+            }
+        } catch (final JSONException e) {
+            return null; // swallow error
+        }
+        return keywords;
+    }
+
+
     public static int saveImage(final Image i) throws IOException {
         JSONObject json = RestApi.postImage(BASE_IMG_URL + "/", i);
 
