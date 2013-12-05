@@ -32,6 +32,7 @@ public class RestApiV3 extends AsyncTask<RestData, Void, Boolean> {
     private int newKeywordId;
     private Uri imageLoc;
     private List<Image> images;
+    private List<String> imageKeywords;
     private Map<String, Integer> popularKeywords;
     private RestData.RestAction action;
     private int adapterPosition;
@@ -45,19 +46,22 @@ public class RestApiV3 extends AsyncTask<RestData, Void, Boolean> {
         for (int i = 0; i < params.size(); i++) {
             paramsMap.put(params.get(i).getName(), params.get(i).getValue());
         }
-        adapterPosition = Integer.valueOf(paramsMap.get("ap")).intValue();
+
         try {
             int id;
             switch (action) {
                 case GET_IMAGE:
+                    adapterPosition = Integer.valueOf(paramsMap.get("ap")).intValue();
                     id = Integer.valueOf(paramsMap.get("id")).intValue();
                     this.image = RestApiInterface.getImage(id);
                     break;
                 case GET_IMAGE_DATA:
+                    adapterPosition = Integer.valueOf(paramsMap.get("ap")).intValue();
                     id = Integer.valueOf(paramsMap.get("id")).intValue();
                     this.imageLoc = RestApiInterface.getImageData(id);
                     break;
                 case GET_IMAGES:
+                    adapterPosition = Integer.valueOf(paramsMap.get("ap")).intValue();
                     String sd = null, sc = null, k = null;
                     Integer l = null;
                     Double minLat = null, maxLat = null, minLon = null, maxLon = null;
@@ -104,7 +108,7 @@ public class RestApiV3 extends AsyncTask<RestData, Void, Boolean> {
                     if (paramsMap.containsKey("imgID")) {
                         imgID = Integer.valueOf(paramsMap.get("imgID"));
                     }
-
+                    this.imageKeywords = RestApiInterface.getKeywordsForImage(imgID);
 
                     break;
                 case POST_IMAGE:
@@ -112,12 +116,12 @@ public class RestApiV3 extends AsyncTask<RestData, Void, Boolean> {
                     i.setLongitude(Double.valueOf(paramsMap.get("lon")));
                     i.setLatitude(Double.valueOf(paramsMap.get("lat")));
                     i.setImage(data.getImage());
-                    i.setThumbnail(data.getThumb());
                     this.newImageId = RestApiInterface.saveImage(i);
                     StringTokenizer kwSplitter = new StringTokenizer(paramsMap.get("keywords"), "#");
                     ArrayList<Integer> kwIds = new ArrayList<Integer>();
                     while (kwSplitter.hasMoreTokens()) {
-                        kwIds.add(RestApiInterface.saveKeyword(kwSplitter.nextToken(),newImageId));
+                        kwIds.add(RestApiInterface.saveKeyword(
+                                kwSplitter.nextToken(),newImageId));
                     }
                     break;
                 case POST_KEYWORD:

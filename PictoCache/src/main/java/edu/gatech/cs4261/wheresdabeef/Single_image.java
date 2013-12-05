@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -35,6 +36,14 @@ public class Single_image extends ActionBarActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+    static ProgressBar progressBar;
+    static ImageView imageView;
+    static TextView textView;
+
+    public static void setImageUri(Uri uri) {
+        progressBar.setVisibility(View.GONE);
+        Single_image.imageView.setImageURI(uri);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +103,7 @@ public class Single_image extends ActionBarActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1, (Uri) getIntent().getExtras().getParcelable("imageLocation"));
+            return PlaceholderFragment.newInstance(position + 1);
         }
 
         @Override
@@ -132,11 +141,10 @@ public class Single_image extends ActionBarActivity {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber, Uri imageLocation) {
+        public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            args.putParcelable("imageLocation", imageLocation);
             fragment.setArguments(args);
             return fragment;
         }
@@ -148,8 +156,9 @@ public class Single_image extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_single_picture, container, false);
-            ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
-            TextView textView = (TextView) rootView.findViewById(R.id.textView);
+            imageView = (ImageView) rootView.findViewById(R.id.imageView);
+            textView = (TextView) rootView.findViewById(R.id.textView);
+            progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 //            Uri imageLocation = getArguments().getParcelable("imageLocation");
 //            int width = (int) getResources().getDimension(R.dimen.single_image_width);
 //            imageView.setImageBitmap(ImageAdapter.decodeSampledBitmap(imageLocation, 100, 100));
