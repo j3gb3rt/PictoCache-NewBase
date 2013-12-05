@@ -16,6 +16,6 @@
     <string name="action_settings">Settings</string>
     <string name="action_camera">Camera</string>
     <string name="title_activity_single_image">Cache</string>
-    <string name="tag_picture_hint">#tagyourpicture, #withtags</string>
+    <string name="tag_picture_hint">#tagyourpicture #withtags</string>
     <string name="taken_submit">Upload</string>
 </resources>

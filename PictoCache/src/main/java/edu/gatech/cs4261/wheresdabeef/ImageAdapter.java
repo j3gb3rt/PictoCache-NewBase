@@ -32,14 +32,17 @@ public class ImageAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Image> mImages;
     private int mPosition;
+
     public ImageAdapter(Context c, int position, String keyword) {
+        AdapterHolder.stopTask();
+        AdapterHolder.stopImageTask();
         mContext = c;
         mImages = new ArrayList<Image>();
         mPosition = position;
         if ((position > 0) && (position < 4)) {
             if (keyword.equals(NavigationDrawerFragment.PREDEFINED_SECTION_NEARBY)) {
                 LocationApi.startPollingLocation(mContext);
-                RestApiV3 task = new RestApiV3(mContext);
+                AdapterHolder.setTask(new RestApiV3(mContext));
                 RestData data = new RestData();
                 data.setAction(RestData.RestAction.GET_IMAGES);
                 data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
@@ -55,27 +58,27 @@ public class ImageAdapter extends BaseAdapter {
                               String.valueOf(location.getLongitude() - 0.0005)));
                 data.addParam(new BasicNameValuePair("maxLon",
                               String.valueOf(location.getLongitude() + 0.0005)));
-                task.execute(data);
+                AdapterHolder.executeTask(data);
             }
             if (keyword.equals(NavigationDrawerFragment.PREDEFINED_SECTION_POPULAR)) {
-                RestApiV3 task = new RestApiV3(mContext);
+                AdapterHolder.setTask(new RestApiV3(mContext));
                 RestData data = new RestData();
                 data.setAction(RestData.RestAction.GET_POPULAR_KEYWORDS);
                 data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
                 data.addParam(new BasicNameValuePair("sd", RestApiInterface.SORT_DESC));
                 data.addParam(new BasicNameValuePair("sc", RestApiInterface.SORT_IMG_ID));
                 data.addParam(new BasicNameValuePair("l", String.valueOf(8)));
-                task.execute(data);
+                AdapterHolder.executeTask(data);
             }
             if (keyword.equals(NavigationDrawerFragment.PREDEFINED_SECTION_NEW)) {
-                RestApiV3 task = new RestApiV3(mContext);
+                AdapterHolder.setTask(new RestApiV3(mContext));
                 RestData data = new RestData();
                 data.setAction(RestData.RestAction.GET_IMAGES);
                 data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
                 data.addParam(new BasicNameValuePair("sd", RestApiInterface.SORT_DESC));
                 data.addParam(new BasicNameValuePair("sc", RestApiInterface.SORT_IMG_ID));
                 data.addParam(new BasicNameValuePair("l", String.valueOf(8)));
-                task.execute(data);
+                AdapterHolder.executeTask(data);
             }
         }
         else {
@@ -95,9 +98,12 @@ public class ImageAdapter extends BaseAdapter {
 
     public void setImages (List<Image> images){
         mImages = (ArrayList)images;
-        DownloadImageTask imageTask = new DownloadImageTask();
-        imageTask.setAdapterPosition(mPosition);
-        imageTask.execute(mImages);
+        AdapterHolder.setImageTask(new DownloadImagesTask(), mPosition);
+        AdapterHolder.executeImageTask(mImages);
+    }
+
+    public void stopImageDownload() {
+        ;
     }
 
     public void setImage (int position,Uri imageLocation) {
@@ -106,8 +112,8 @@ public class ImageAdapter extends BaseAdapter {
         mImages.set(position, workingImage);
     }
 
-    public void addImage (Image image) {
-        mImages.add(image);
+    public void addImage (int position, Uri imageLocation) {
+        mImages.get(position).setImage(imageLocation);
     }
 
     public int getCount() {
@@ -130,6 +136,13 @@ public class ImageAdapter extends BaseAdapter {
 
     public long getItemId(int position) {
         return 0;
+    }
+
+    public void setThumbnailUri(int position, Uri imageLocation) {
+        Image temp = mImages.get(position);
+        temp.setThumbnail(imageLocation);
+        mImages.set(position, temp);
+
     }
 
     public void setImageUri(int position, Uri imageLocation) {
@@ -223,13 +236,13 @@ public class ImageAdapter extends BaseAdapter {
         //else {
                 //imageView = (SquareImageView) convertView;
         //}
-        if(mImages.get(position).getImage() != null) {
+        if(mImages.get(position).getThumbnail() != null) {
             progressBar.setVisibility(View.GONE);
             //imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setPadding(4, 4, 4, 4);
             imageView.setVisibility(View.VISIBLE);
-            imageView.setImageBitmap(decodeSampledBitmap(mImages.get(position).getImage(), 100, 100));
+            imageView.setImageBitmap(decodeSampledBitmap(mImages.get(position).getThumbnail(), 100, 100));
             //imageView.setImageBitmap(decodeSampledBitmapFromResource(mContext.getResources(),mThumbIds[images.get(position)], 100, 100));
         }
         return rootView;

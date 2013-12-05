@@ -8,9 +8,11 @@ import android.widget.Toast;
 import org.apache.http.NameValuePair;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import edu.gatech.cs4261.wheresdabeef.AdapterHolder;
 import edu.gatech.cs4261.wheresdabeef.domain.Image;
@@ -112,6 +114,11 @@ public class RestApiV3 extends AsyncTask<RestData, Void, Boolean> {
                     i.setImage(data.getImage());
                     i.setThumbnail(data.getThumb());
                     this.newImageId = RestApiInterface.saveImage(i);
+                    StringTokenizer kwSplitter = new StringTokenizer(paramsMap.get("keywords"), "#");
+                    ArrayList<Integer> kwIds = new ArrayList<Integer>();
+                    while (kwSplitter.hasMoreTokens()) {
+                        kwIds.add(RestApiInterface.saveKeyword(kwSplitter.nextToken(),newImageId));
+                    }
                     break;
                 case POST_KEYWORD:
                     String kw = paramsMap.get("kw");
