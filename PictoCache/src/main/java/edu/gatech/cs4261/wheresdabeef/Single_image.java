@@ -1,5 +1,6 @@
 package edu.gatech.cs4261.wheresdabeef;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -151,7 +152,9 @@ public class Single_image extends ActionBarActivity {
             ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
             Uri imageLocation = getArguments().getParcelable("imageLocation");
             int width = (int) getResources().getDimension(R.dimen.single_image_width);
-            imageView.setImageBitmap(ImageAdapter.decodeSampledBitmap(imageLocation, 100, 100));
+            Bitmap image = ImageAdapter.decodeSampledBitmap(imageLocation, 100, 100);
+            if (image != null)
+                imageView.setImageBitmap(image);
             TextView textView = (TextView) rootView.findViewById(R.id.textView);
             String keywordText = "Keywords:";
             //for()

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -164,27 +165,28 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public static Bitmap decodeSampledBitmap(Uri imageLocation, int reqWidth, int reqHeight) {
-
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(imageLocation.getPath(), options);
-
-        //ExifInterface exif = null;
-
-        //try {
+        try {
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(imageLocation.getPath(), options);
+            //ExifInterface exif = null;
+            //try {
             //exif = new ExifInterface(imageLocation.getPath());
-
-        //} catch (IOException e) {
+            //} catch (IOException e) {
             //e.printStackTrace();
-        //}
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth,
-                reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(imageLocation.getPath(), options);
+            //}
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, reqWidth,
+                    reqHeight);
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeFile(imageLocation.getPath(), options);
+        }
+        catch(NullPointerException npe) {
+            Log.d("PictoCache", "Image is null");
+            return null;
+        }
     }
 
     public static Bitmap decodeSampledBitmapFromResource(Resources res,
