@@ -88,7 +88,7 @@ public class NavigationDrawerFragment extends Fragment {
         adapter = new SectionedListAdapter();
         adapter.addSeparatorItem("Featured");
         adapter.addItem(PREDEFINED_SECTION_NEARBY);
-        adapter.addItem(PREDEFINED_SECTION_POPULAR);
+        //adapter.addItem(PREDEFINED_SECTION_POPULAR);
         adapter.addItem(PREDEFINED_SECTION_NEW);
         adapter.addSectionSpace();
         adapter.addSeparatorItem("Subscribed Tags");
