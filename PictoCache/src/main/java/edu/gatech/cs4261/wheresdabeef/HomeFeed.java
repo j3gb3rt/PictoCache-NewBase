@@ -268,8 +268,8 @@ public class HomeFeed extends ActionBarActivity
             gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                     Intent intent = new Intent(getActivity(), Single_image.class);
-                    int imgID = imageAdapter.getImageId(position);
-                    intent.putExtra("imgId", imgID);
+                    int imgId = imageAdapter.getImageId(position);
+                    new DownloadImageTask().execute(imgId);
                     startActivity(intent);
                 }
             });

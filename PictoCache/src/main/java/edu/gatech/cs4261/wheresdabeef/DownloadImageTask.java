@@ -13,6 +13,7 @@ import edu.gatech.cs4261.wheresdabeef.rest.RestApiInterface;
 public class DownloadImageTask extends AsyncTask<Integer,Integer,Boolean>{
     private Uri imageLocation;
     private ArrayList<String> keywords;
+    private String keywordString;
     private int mAdapterPosition;
     private int mImagePosition;
 
@@ -22,9 +23,11 @@ public class DownloadImageTask extends AsyncTask<Integer,Integer,Boolean>{
         RestApiInterface rai = new RestApiInterface();
             try {
                 imageLocation = rai.getImageData(imgId);
-
                 keywords = (ArrayList<String>) rai.getKeywordsForImage(imgId);
-
+                keywordString = "";
+                for (String keyword : keywords) {
+                    keywordString = keywordString + "#" + keyword + " ";
+                }
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -41,11 +44,8 @@ public class DownloadImageTask extends AsyncTask<Integer,Integer,Boolean>{
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
-        ImageAdapter adapter = AdapterHolder.getAdapter(mAdapterPosition);
-        adapter.setImageUri(mImagePosition, imageLocation);
-        adapter.notifyDataSetChanged();
-        AdapterHolder.setAdapter(mAdapterPosition, adapter);
-
+        Single_image.imageView.setImageURI(imageLocation);
+        Single_image.textView.setText(keywordString);
     }
 
     public void setAdapterPosition(int position){
