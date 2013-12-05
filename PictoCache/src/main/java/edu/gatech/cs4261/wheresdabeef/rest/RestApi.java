@@ -117,7 +117,7 @@ public class RestApi {
     // http://stackoverflow.com/questions/2793150/how-to-use-java-net-urlconnection-to-fire-and-handle-http-requests
     public static JSONObject postImage(String url, Image image) throws IOException {
         File f = new File(image.getImage().getPath());
-        File g = new File(image.getImage().getPath());
+        File g = new File(image.getImage().getPath()+"tn");
         int maxSize = 1000000;
         if (f.length() > maxSize) {
             double scale = Math.ceil(f.length() / maxSize);
@@ -167,7 +167,7 @@ public class RestApi {
             writer.append(CRLF);
             writer.append(String.valueOf(image.getLongitude())).append(CRLF).flush();
 
-            // Send image
+// Send image
             writer.append("--" + boundary).append(CRLF);
             writer.append("Content-Disposition: form-data; name=\"img\"; filename=\"img.png\"").append(CRLF);
             writer.append("Content-Type: image/png").append(CRLF);
@@ -184,6 +184,26 @@ public class RestApi {
                 output.flush();
             } finally {
                 try { input.close(); } catch (IOException e) {}
+            }
+            writer.append(CRLF).flush();
+
+            // Send thumbnail
+            writer.append("--" + boundary).append(CRLF);
+            writer.append("Content-Disposition: form-data; name=\"tn\"; filename=\"tn.png\"").append(CRLF);
+            writer.append("Content-Type: image/png").append(CRLF);
+            writer.append("Content-Transfer-Encoding: binary").append(CRLF);
+            writer.append(CRLF).flush();
+
+            BufferedInputStream inputTn = new BufferedInputStream(new FileInputStream(g));
+            BufferedOutputStream outputTn = new BufferedOutputStream(outputStream);
+            try {
+                byte[] buffer = new byte[1024];
+                for (int length = 0; (length = inputTn.read(buffer)) > 0;) {
+                    outputTn.write(buffer, 0, length);
+                }
+                outputTn.flush();
+            } finally {
+                try { inputTn.close(); } catch (IOException e) {}
             }
             writer.append(CRLF).flush();
 

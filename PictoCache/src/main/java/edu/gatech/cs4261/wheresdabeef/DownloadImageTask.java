@@ -14,6 +14,7 @@ public class DownloadImageTask extends AsyncTask<Integer,Integer,Boolean>{
     private Uri imageLocation;
     private ArrayList<String> keywords;
     private int mAdapterPosition;
+    private int mImagePosition;
 
     @Override
     protected Boolean doInBackground(Integer... params) {
@@ -21,6 +22,7 @@ public class DownloadImageTask extends AsyncTask<Integer,Integer,Boolean>{
         RestApiInterface rai = new RestApiInterface();
             try {
                 imageLocation = rai.getImageData(imgId);
+
                 keywords = (ArrayList<String>) rai.getKeywordsForImage(imgId);
 
             }
@@ -33,21 +35,24 @@ public class DownloadImageTask extends AsyncTask<Integer,Integer,Boolean>{
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-//        super.onProgressUpdate(values);
-//        int position = values[0];
-//        ImageAdapter adapter = AdapterHolder.getAdapter(mAdapterPosition);
-//        adapter.setImageUri(position, imageLocation);
-//        adapter.notifyDataSetChanged();
-//        AdapterHolder.setAdapter(mAdapterPosition, adapter);
+        super.onProgressUpdate(values);
 
     }
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
+        ImageAdapter adapter = AdapterHolder.getAdapter(mAdapterPosition);
+        adapter.setImageUri(mImagePosition, imageLocation);
+        adapter.notifyDataSetChanged();
+        AdapterHolder.setAdapter(mAdapterPosition, adapter);
 
     }
 
     public void setAdapterPosition(int position){
         mAdapterPosition = position;
+    }
+
+    public void setImagePosition(int position){
+        mImagePosition = position;
     }
 }
