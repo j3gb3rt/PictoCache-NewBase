@@ -31,7 +31,8 @@ import edu.gatech.cs4261.wheresdabeef.rest.RestData;
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<Image> mImages;
-    private int mPosition;
+    private int mPosition, numImagesLoaded = 0;
+    private int whichToLoad = 0; // 1 = NEARBY, 2 = POPULAR, 3 = NEW
 
     public ImageAdapter(Context c, int position, String keyword) {
         AdapterHolder.stopTask();
@@ -40,10 +41,13 @@ public class ImageAdapter extends BaseAdapter {
         mImages = new ArrayList<Image>();
         mPosition = position;
         if ((position > 0) && (position < 4)) {
+            Log.d("In here", "inside new");
             if (keyword.equals(NavigationDrawerFragment.PREDEFINED_SECTION_NEARBY)) {
+                numImagesLoaded = 0;
+                whichToLoad = 1;
+                RestData data = new RestData();
                 LocationApi.startPollingLocation(mContext);
                 AdapterHolder.setTask(new RestApiV3(mContext));
-                RestData data = new RestData();
                 data.setAction(RestData.RestAction.GET_IMAGES);
                 data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
                 data.addParam(new BasicNameValuePair("sd", RestApiInterface.SORT_DESC));
@@ -51,18 +55,20 @@ public class ImageAdapter extends BaseAdapter {
                 data.addParam(new BasicNameValuePair("l", String.valueOf(8)));
                 Location location = LocationApi.stopPollingLocation();
                 data.addParam(new BasicNameValuePair("minLat",
-                              String.valueOf(location.getLatitude() - 0.0005)));
+                        String.valueOf(location.getLatitude() - 0.0005)));
                 data.addParam(new BasicNameValuePair("maxLat",
-                              String.valueOf(location.getLatitude() + 0.0005)));
+                        String.valueOf(location.getLatitude() + 0.0005)));
                 data.addParam(new BasicNameValuePair("minLon",
-                              String.valueOf(location.getLongitude() - 0.0005)));
+                        String.valueOf(location.getLongitude() - 0.0005)));
                 data.addParam(new BasicNameValuePair("maxLon",
-                              String.valueOf(location.getLongitude() + 0.0005)));
+                        String.valueOf(location.getLongitude() + 0.0005)));
                 AdapterHolder.executeTask(data);
             }
             if (keyword.equals(NavigationDrawerFragment.PREDEFINED_SECTION_POPULAR)) {
-                AdapterHolder.setTask(new RestApiV3(mContext));
+                numImagesLoaded = 0;
+                whichToLoad = 2;
                 RestData data = new RestData();
+                AdapterHolder.setTask(new RestApiV3(mContext));
                 data.setAction(RestData.RestAction.GET_POPULAR_KEYWORDS);
                 data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
                 data.addParam(new BasicNameValuePair("sd", RestApiInterface.SORT_DESC));
@@ -71,8 +77,10 @@ public class ImageAdapter extends BaseAdapter {
                 AdapterHolder.executeTask(data);
             }
             if (keyword.equals(NavigationDrawerFragment.PREDEFINED_SECTION_NEW)) {
-                AdapterHolder.setTask(new RestApiV3(mContext));
+                numImagesLoaded = 0;
+                whichToLoad = 3;
                 RestData data = new RestData();
+                AdapterHolder.setTask(new RestApiV3(mContext));
                 data.setAction(RestData.RestAction.GET_IMAGES);
                 data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
                 data.addParam(new BasicNameValuePair("sd", RestApiInterface.SORT_DESC));
@@ -82,8 +90,8 @@ public class ImageAdapter extends BaseAdapter {
             }
         }
         else {
-            RestApiV3 task = new RestApiV3(mContext);
             RestData data = new RestData();
+            RestApiV3 task = new RestApiV3(mContext);
             data.setAction(RestData.RestAction.GET_IMAGES);
             data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
             data.addParam(new BasicNameValuePair("k", keyword));
@@ -118,6 +126,50 @@ public class ImageAdapter extends BaseAdapter {
 
     public int getCount() {
         return mImages.size();
+    }
+
+    public void getNext8Images() {
+        RestData data = new RestData();
+        if (whichToLoad == 1) {
+            numImagesLoaded+=8;
+            LocationApi.startPollingLocation(mContext);
+            AdapterHolder.setTask(new RestApiV3(mContext));
+            data.setAction(RestData.RestAction.GET_IMAGES);
+            data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
+            data.addParam(new BasicNameValuePair("sd", RestApiInterface.SORT_DESC));
+            data.addParam(new BasicNameValuePair("sc", RestApiInterface.SORT_IMG_ID));
+            data.addParam(new BasicNameValuePair("l", String.valueOf(8)));
+            Location location = LocationApi.stopPollingLocation();
+            data.addParam(new BasicNameValuePair("minLat",
+                    String.valueOf(location.getLatitude() - 0.0005)));
+            data.addParam(new BasicNameValuePair("maxLat",
+                    String.valueOf(location.getLatitude() + 0.0005)));
+            data.addParam(new BasicNameValuePair("minLon",
+                    String.valueOf(location.getLongitude() - 0.0005)));
+            data.addParam(new BasicNameValuePair("maxLon",
+                    String.valueOf(location.getLongitude() + 0.0005)));
+        }
+        else if (whichToLoad == 2) {
+            numImagesLoaded+=8;
+            AdapterHolder.setTask(new RestApiV3(mContext));
+            data.setAction(RestData.RestAction.GET_POPULAR_KEYWORDS);
+            data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
+            data.addParam(new BasicNameValuePair("sd", RestApiInterface.SORT_DESC));
+            data.addParam(new BasicNameValuePair("sc", RestApiInterface.SORT_IMG_ID));
+            data.addParam(new BasicNameValuePair("l", String.valueOf(8)));
+        }
+        else if (whichToLoad == 3) {
+            numImagesLoaded+=8;
+            AdapterHolder.setTask(new RestApiV3(mContext));
+            data.setAction(RestData.RestAction.GET_IMAGES);
+            data.addParam(new BasicNameValuePair("ap", String.valueOf(mPosition)));
+            data.addParam(new BasicNameValuePair("sd", RestApiInterface.SORT_DESC));
+            data.addParam(new BasicNameValuePair("sc", RestApiInterface.SORT_IMG_ID));
+            data.addParam(new BasicNameValuePair("l", String.valueOf(8)));
+        }
+        data.addParam(new BasicNameValuePair("b", String.valueOf(numImagesLoaded)));
+        Log.w("PictoCache Num Images", numImagesLoaded + "");
+        AdapterHolder.executeTask(data);
     }
 
     public Uri getImageUri(int position) {

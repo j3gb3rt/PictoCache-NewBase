@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 
 import java.io.File;
@@ -273,6 +274,15 @@ public class HomeFeed extends ActionBarActivity
                     startActivity(intent);
                 }
             });
+
+            Button button = (Button) rootView.findViewById(R.id.load_more_button);
+            button.setOnClickListener(new Button.OnClickListener() {
+                public void onClick(View v)
+                {
+                    imageAdapter.getNext8Images();
+                }
+            });
+
             return rootView;
         }
 
