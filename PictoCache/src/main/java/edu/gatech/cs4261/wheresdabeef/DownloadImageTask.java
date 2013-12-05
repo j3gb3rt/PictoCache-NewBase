@@ -44,7 +44,7 @@ public class DownloadImageTask extends AsyncTask<Integer,Integer,Boolean>{
 
     @Override
     protected void onPostExecute(Boolean aBoolean) {
-        Single_image.imageView.setImageURI(imageLocation);
+        Single_image.setImageUri(imageLocation);
         Single_image.textView.setText(keywordString);
     }
 

@@ -1,5 +1,6 @@
 package edu.gatech.cs4261.wheresdabeef;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -34,8 +36,14 @@ public class Single_image extends ActionBarActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+    static ProgressBar progressBar;
     static ImageView imageView;
     static TextView textView;
+
+    public static void setImageUri(Uri uri) {
+        progressBar.setVisibility(View.GONE);
+        Single_image.imageView.setImageURI(uri);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +158,7 @@ public class Single_image extends ActionBarActivity {
             View rootView = inflater.inflate(R.layout.fragment_single_picture, container, false);
             imageView = (ImageView) rootView.findViewById(R.id.imageView);
             textView = (TextView) rootView.findViewById(R.id.textView);
+            progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
 //            Uri imageLocation = getArguments().getParcelable("imageLocation");
 //            int width = (int) getResources().getDimension(R.dimen.single_image_width);
 //            imageView.setImageBitmap(ImageAdapter.decodeSampledBitmap(imageLocation, 100, 100));
