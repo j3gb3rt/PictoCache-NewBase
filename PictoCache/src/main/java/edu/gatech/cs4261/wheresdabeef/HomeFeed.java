@@ -151,6 +151,8 @@ public class HomeFeed extends ActionBarActivity
                 return true;
             case R.id.action_camera:
                 openCamera();
+            case R.id.action_refresh:
+                refresh();
 
                 //case R.id.action_search:
                 //MenuItemCompat.expandActionView(item);
@@ -175,6 +177,10 @@ public class HomeFeed extends ActionBarActivity
         // start the image capture Intent
         this.startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 
+
+    }
+
+    private void refresh() {
 
     }
 
